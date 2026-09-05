@@ -6,6 +6,9 @@ const crypto = require('crypto');
 require('dotenv').config();
 
 const app = express();
+const isProduction = process.env.NODE_ENV === 'production';
+
+app.set('trust proxy', 1);
 
 app.use(cors({
   origin: process.env.FRONTEND_URL,
@@ -16,8 +19,8 @@ app.use(cookieSession({
   name: 'sf_session',
   keys: [process.env.SESSION_SECRET],
   maxAge: 24 * 60 * 60 * 1000,
-  sameSite: 'lax',
-  secure: false
+  sameSite: isProduction ? 'none' : 'lax',
+  secure: isProduction
 }));
 
 // Helper PKCE functions
@@ -169,4 +172,5 @@ app.delete('/api/sobjects/:objectName/:id', requireAuth, async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log('Backend running on http://localhost:5000'));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Backend running on http://localhost:${PORT}`));
