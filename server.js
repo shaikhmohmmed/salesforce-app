@@ -40,6 +40,20 @@ const OBJECT_FIELDS = {
   Case: ['CaseNumber', 'Subject', 'Status', 'Priority', 'Origin']
 };
 
+// Health check / root route
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Salesforce CRUD Backend API is running',
+    endpoints: {
+      authStatus: '/api/auth/status',
+      login: '/api/auth/login',
+      callback: '/api/auth/callback',
+      records: '/api/sobjects/:objectName'
+    }
+  });
+});
+
 // Check if user is logged in
 app.get('/api/auth/status', (req, res) => {
   if (req.session && req.session.accessToken) {
